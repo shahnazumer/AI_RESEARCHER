@@ -27,7 +27,7 @@ This project uses **[uv](https://github.com/astral-sh/uv)** for dependency manag
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/shahnazumer/AI_RESEARCHER.git
-cd AI_RESEARCHER
+```
 
 ### 2. Create & Activate Environment
 ```bash
@@ -81,6 +81,7 @@ Write a LaTeX research paper
 Render it as a PDF in the output/ directory
 
 📂 Project Structure
+```bash
 .
 ├── ai_researcher.py     # Main CLI entrypoint
 ├── arxiv_tool.py        # arXiv search integration
@@ -89,13 +90,12 @@ Render it as a PDF in the output/ directory
 ├── frontend.py          # Streamlit chat interface
 ├── requirements.txt     # Dependencies
 └── .env                 # API keys (ignored by git)
+```
 
 ⚠️ Notes
 
 Requires a valid Google Generative AI API Key.
-
 Tectonic must be installed for LaTeX → PDF rendering.
-
 Intended for research and educational purposes only.
 
 📜 License
