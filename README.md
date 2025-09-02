@@ -27,43 +27,60 @@ This project uses **[uv](https://github.com/astral-sh/uv)** for dependency manag
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/shahnazumer/AI_RESEARCHER.git
-cd AI_RESEARCHER
+```
 
-### 2. Create & activate environment
+### 2. Create & Activate Environment
+```bash
+# Create virtual environment
 uv venv
-# Linux/Mac
-source .venv/bin/activate
-# Windows
-.venv\Scripts\activate
 
-### 3. Install dependencies
+# Activate (Linux/Mac)
+source .venv/bin/activate  
+
+# Activate (Windows)
+.venv\Scripts\activate
+```
+
+### 3. Install Dependencies
+```bash
 uv add requirements.txt
+```
 
 ### 4. Install Tectonic (LaTeX → PDF)
-Download from Tectonic Releases
-Ensure tectonic is available in your system PATH
-Or update TECTONIC_PATH in write_pdf.py
 
-### 5. Set up environment variables
-Create a .env file with your API key:
+ - Download from Tectonic Releases
+ - Ensure tectonic is available in your system PATH.
+ - Or update TECTONIC_PATH in write_pdf.py.
+
+### 5. Set Up Environment Variables
+```bash
+Create a .env file and add your API key:
 GOOGLE_API_KEY=your_google_api_key_here
+```
 
 ▶️ Usage
+```bash
 Run the Streamlit frontend:
 uv run streamlit run frontend.py
+```
+
 This will launch a chat-based interface to interact with the research AI.
 
 ⚡ Quickstart Example
-Try with a sample topic:
+
+Try with a sample topic as an example:
+```bash
 Write me research paper on quantum computing
+```
 The agent will:
-Fetch recent arXiv papers
-Summarize key findings
-Suggest future research directions
-Write a LaTeX research paper
-Render it as a PDF in the output/ directory
+ - Fetch recent arXiv papers
+ - Summarize key findings
+ - Suggest future research directions
+ - Write a LaTeX research paper
+ - Render it as a PDF in the output/ directory
 
 📂 Project Structure
+```bash
 .
 ├── ai_researcher.py     # Main CLI entrypoint
 ├── arxiv_tool.py        # arXiv search integration
@@ -72,14 +89,16 @@ Render it as a PDF in the output/ directory
 ├── frontend.py          # Streamlit chat interface
 ├── requirements.txt     # Dependencies
 └── .env                 # API keys (ignored by git)
+```
 
 ⚠️ Notes
-Requires a valid Google Generative AI API Key
-Tectonic must be installed for LaTeX → PDF rendering
-Intended for research and educational purposes only
+
+ - Requires a valid Google Generative AI API Key.
+ - Tectonic must be installed for LaTeX → PDF rendering.
+ - Intended for research and educational purposes only.
 
 📜 License
+
 MIT License – free to use and modify.
 
-✨ With this assistant, you can go from idea → literature review → paper → PDF in a single workflow.
-
+✨ With this assistant, you can go from idea → literature review → paper draft → polished PDF.

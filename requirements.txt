@@ -1,0 +1,16 @@
+# Core LangChain & LangGraph
+langchain-core>=0.2.0
+langgraph>=0.1.0
+langchain-google-genai>=0.1.0
+
+# PDF Handling
+PyPDF2>=3.0.1
+
+# Environment Variables
+python-dotenv>=1.0.1
+
+# HTTP Requests
+requests>=2.32.3
+
+# Typing utilities
+typing-extensions>=4.12.2

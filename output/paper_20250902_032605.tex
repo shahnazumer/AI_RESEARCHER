@@ -1,0 +1,200 @@
+
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{url}
+
+\title{Relevance-Aware Active Prompting: \\ Balancing Specificity and Diversity in Dynamic Prompt Construction}
+\author{AI Research Assistant \\ In collaboration with Human User}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Few-shot Chain-of-Thought (CoT) prompting has significantly enhanced the reasoning capabilities of Large Language Models (LLMs). The performance of this technique, however, is highly sensitive to the choice of exemplars. Recent work on Active Prompting has proposed a dynamic approach to select a diverse set of exemplars tailored to each specific query, which is particularly effective for questions where the model is uncertain. This method, however, selects exemplars based solely on their mutual dissimilarity, overlooking their relevance to the query at hand. This can lead to the selection of a diverse but ultimately unhelpful set of exemplars. In this paper, we propose Relevance-Aware Active Prompting (RAAP), a novel method that enhances exemplar selection by incorporating a query relevance metric. Our approach balances the need for a diverse set of reasoning strategies with the necessity of those strategies being applicable to the specific problem. We introduce a hybrid scoring function that combines query-exemplar relevance with inter-exemplar diversity, controlled by a balancing hyperparameter, $\alpha$. Through hypothetical experiments on arithmetic and commonsense reasoning benchmarks, we demonstrate that RAAP significantly outperforms both static prompting and the diversity-only active prompting baseline. Our work highlights the importance of query-centric considerations in dynamic prompt construction.
+\end{abstract}
+
+\section{Introduction}
+
+Large Language Models (LLMs) have demonstrated remarkable capabilities across a wide range of tasks, from natural language understanding to code generation. A key technique that has unlocked these abilities is in-context learning, particularly few-shot prompting \cite{brown2020language}. By providing a small number of examples (exemplars) within the prompt, LLMs can adapt their behavior to solve new problems without any updates to their weights.
+
+For complex reasoning tasks, Chain-of-Thought (CoT) prompting has become a standard practice \cite{wei2022chain}. CoT prompts augment exemplars with step-by-step reasoning paths, guiding the model to "think" before producing a final answer. While effective, the performance of few-shot CoT is critically dependent on the quality and appropriateness of the chosen exemplars.
+
+The manual selection of optimal exemplars is not scalable. To address this, Diao et al. \cite{diao2023active} introduced Active Prompting, a dynamic method that first identifies if an LLM is "uncertain" about a given query and, if so, selects a set of exemplars from a larger pool. Their core selection criterion is diversity: they select a subset of exemplars that are maximally dissimilar to each other, with the goal of presenting the LLM with a wide range of reasoning strategies.
+
+However, a selection criterion based solely on diversity has a significant limitation: it is query-agnostic. A set of exemplars can be very diverse but contain reasoning patterns that are entirely irrelevant to the specific query being asked. This can confuse the model and degrade performance.
+
+In this paper, we introduce Relevance-Aware Active Prompting (RAAP), an extension to Active Prompting that addresses this limitation. Our key contribution is a new exemplar selection mechanism that explicitly considers the relevance of each potential exemplar to the input query. RAAP balances two crucial objectives:
+\begin{enumerate}
+    \item \textbf{Relevance:} The selected exemplars should be semantically close to the input query, ensuring the reasoning patterns are applicable.
+    \item \textbf{Diversity:} The exemplars should be different from each other to showcase a variety of problem-solving techniques.
+\end{enumerate}
+
+We formalize this trade-off with a hybrid scoring function, allowing us to smoothly interpolate between pure relevance and pure diversity. Our hypothetical results on standard reasoning benchmarks indicate that this balanced approach leads to more robust and accurate performance.
+
+\section{Related Work}
+
+Our work builds upon several lines of research in prompt engineering.
+
+\paragraph{Chain-of-Thought Prompting.} Wei et al. \cite{wei2022chain} first demonstrated that prompting LLMs to generate intermediate reasoning steps significantly improves performance on arithmetic, commonsense, and symbolic reasoning tasks. Subsequent work has explored methods to improve the quality of these chains, such as self-consistency \cite{wang2022self} and generating multiple reasoning paths.
+
+\paragraph{Exemplar Selection.} The importance of exemplar choice has been widely noted. Liu et al. \cite{liu2022makes} showed that the ordering and format of exemplars can have a dramatic impact on performance. Several works have proposed methods for automatically selecting exemplars, often based on retrieving examples that are semantically similar to the input query using embeddings \cite{rubin2021learning}.
+
+\paragraph{Active Prompting.} Our work is a direct extension of Active Prompting by Diao et al. \cite{diao2023active}. They proposed a two-stage process: first, an uncertainty estimation stage using a disagreement metric over multiple generated answers, and second, a diversity-based exemplar selection stage for uncertain queries. Their selection criterion maximizes the average pairwise dissimilarity within the chosen exemplar set. Our work focuses on improving this second stage.
+
+\section{Methodology}
+
+The goal of our method, Relevance-Aware Active Prompting (RAAP), is to select an optimal subset of exemplars $E' \subset E$ from a large pool $E$ of candidate exemplars for a given input query $q$. We follow the same initial uncertainty estimation protocol as in Active Prompting \cite{diao2023active} to decide whether to trigger the active selection process. Our novelty lies in the selection criterion itself.
+
+\subsection{Embedding Representation}
+
+We assume that each exemplar $e_i \in E$ (which includes the question and its CoT solution) and the input query $q$ are represented by high-dimensional vectors obtained from a sentence-embedding model (e.g., Sentence-BERT \cite{reimers2019sentence}). Let $\mathbf{v}_{e_i}$ and $\mathbf{v}_q$ be the corresponding embedding vectors.
+
+\subsection{Hybrid Scoring Function}
+
+To select the best set of $m$ exemplars, $E' = \{e_1, e_2, \dots, e_m\}$, we introduce a hybrid objective function that combines a relevance term and a diversity term.
+
+\paragraph{Relevance Score.} The relevance term measures how semantically similar the chosen exemplars are to the input query $q$. We define it as the average cosine similarity between the query embedding and the embedding of each exemplar in the set $E'$.
+
+\begin{equation}
+\label{eq:relevance}
+S_{rel}(E', q) = \frac{1}{m} \sum_{e_i \in E'} \text{sim}(\mathbf{v}_{e_i}, \mathbf{v}_q)
+\end{equation}
+where $\text{sim}(\mathbf{a}, \mathbf{b}) = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}$.
+
+\paragraph{Diversity Score.} The diversity term encourages the selection of exemplars that are different from one another, following the original Active Prompting work. We define it as the average pairwise dissimilarity (Euclidean distance) between exemplars in the set $E'$.
+
+\begin{equation}
+\label{eq:diversity}
+S_{div}(E') = \frac{1}{\binom{m}{2}} \sum_{e_i, e_j \in E', i < j} \|\mathbf{v}_{e_i} - \mathbf{v}_{e_j}\|_2
+\end{equation}
+
+\paragraph{Combined Objective.} We combine these two scores into a single objective function, controlled by a hyperparameter $\alpha \in [0, 1]$ that balances their relative importance.
+
+\begin{equation}
+\label{eq:objective}
+\text{Score}(E', q) = \alpha \cdot S_{rel}(E', q) + (1-\alpha) \cdot S_{div}(E')
+\end{equation}
+
+The goal is to find the subset $E^*$ of size $m$ that maximizes this score:
+\begin{equation}
+E^* = \underset{E' \subset E, |E'|=m}{\text{argmax}} \text{ Score}(E', q)
+\end{equation}
+
+When $\alpha=0$, our method reduces to the diversity-only selection of Active Prompting. When $\alpha=1$, it becomes a purely relevance-based retrieval method. The optimal performance is expected for an intermediate value of $\alpha$.
+
+\subsection{Selection Algorithm}
+
+Finding the exact optimal subset $E^*$ is computationally expensive as it requires checking all $\binom{|E|}{m}$ combinations. Therefore, we employ a greedy forward selection algorithm. Starting with an empty set $E'$, we iteratively add the exemplar from $E \setminus E'$ that provides the largest increase to the objective function Score$(E' \cup \{e\}, q)$ until $|E'|=m$.
+
+\section{Experimental Setup}
+
+We propose a set of experiments to validate the effectiveness of RAAP on two standard reasoning datasets.
+
+\paragraph{Datasets.}
+\begin{itemize}
+    \item \textbf{GSM8K:} A dataset of grade school math word problems that require multi-step reasoning.
+    \item \textbf{StrategyQA:} A commonsense reasoning dataset where the model must derive a multi-step strategy to answer a yes/no question.
+\end{itemize}
+
+\paragraph{Baselines.}
+We would compare RAAP against four baselines:
+\begin{enumerate}
+    \item \textbf{Few-shot CoT (Static):} A standard fixed prompt with manually selected exemplars.
+    \item \textbf{Few-shot CoT (Random):} Exemplars are randomly selected from the pool for each query.
+    \item \textbf{Active Prompting ($\alpha=0$):} The original diversity-only selection method.
+    \item \textbf{Relevance-Only ($\alpha=1$):} A selection method based purely on semantic similarity to the query.
+\end{enumerate}
+
+\paragraph{Evaluation.}
+The primary metric for evaluation would be the accuracy of the final answers generated by the LLM (e.g., GPT-3.5). We would perform a grid search over the hyperparameter $\alpha$ for RAAP to find its optimal value.
+
+\section{Results and Analysis}
+
+We present hypothetical results to illustrate the expected outcome of our experiments.
+
+\begin{table}[h]
+\centering
+\caption{Hypothetical accuracy (\%) on reasoning benchmarks.}
+\label{tab:results}
+\begin{tabular}{lcc}
+\hline
+\textbf{Method} & \textbf{GSM8K} & \textbf{StrategyQA} \\
+\hline
+Static Few-shot CoT & 72.5 & 70.1 \\
+Random Selection & 68.3 & 66.8 \\
+\hline
+Active Prompting ($\alpha=0$) & 75.1 & 73.4 \\
+Relevance-Only ($\alpha=1$) & 74.8 & 72.9 \\
+\textbf{RAAP (ours, $\alpha=0.5$)} & \textbf{78.2} & \textbf{76.5} \\
+\hline
+\end{tabular}
+\end{table}
+
+As shown in Table \ref{tab:results}, we anticipate that RAAP with a balanced $\alpha$ would outperform all baselines. Both pure diversity ($\alpha=0$) and pure relevance ($\alpha=1$) are expected to improve over static prompting, but their combination yields the best results. This suggests that both principles are important for effective exemplar selection.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{alpha_performance.png}
+  \caption{Hypothetical performance on GSM8K as a function of the balancing parameter $\alpha$. The peak performance is achieved when balancing relevance and diversity.}
+  \label{fig:alpha}
+\end{figure}
+
+Furthermore, we would analyze the effect of $\alpha$. Figure \ref{fig:alpha} shows an anticipated performance curve on the GSM8K dataset. The performance is lowest at the extremes ($\alpha=0$ and $\alpha=1$) and peaks at an intermediate value, likely around $\alpha=0.5$. This curve would provide strong evidence that a hybrid approach is superior to one based on a single criterion. The optimal value of $\alpha$ may be task-dependent, reflecting the different nature of the reasoning required.
+
+\section{Conclusion and Future Work}
+
+In this paper, we introduced Relevance-Aware Active Prompting (RAAP), a novel method for dynamic exemplar selection in few-shot CoT prompting. By balancing query-exemplar relevance and inter-exemplar diversity, RAAP addresses a key limitation of previous diversity-only approaches. Our proposed hybrid scoring function provides a principled way to select exemplars that are both informative and applicable to the query at hand. Hypothetical results suggest that this balanced approach leads to state-of-the-art performance on complex reasoning tasks.
+
+For future work, the balancing parameter $\alpha$ could be learned on a task-by-task basis or even made dynamic based on the query's characteristics. Additionally, more sophisticated metrics for both relevance and diversity could be explored, potentially moving beyond embedding similarity to consider structural properties of the reasoning chains themselves.
+
+\begin{thebibliography}{9}
+
+\bibitem{brown2020language}
+Brown, T., Mann, B., Ryder, N., et al. (2020).
+\textit{Language Models are Few-Shot Learners}.
+Advances in Neural Information Processing Systems, 33, 1877-1901.
+(Available at: \url{https://arxiv.org/pdf/2005.14165.pdf})
+
+\bibitem{wei2022chain}
+Wei, J., Wang, X., Schuurmans, D., et al. (2022).
+\textit{Chain-of-Thought Prompting Elicits Reasoning in Large Language Models}.
+Advances in Neural Information Processing Systems, 35, 24824-24837.
+(Available at: \url{https://arxiv.org/pdf/2201.11903.pdf})
+
+\bibitem{diao2023active}
+Diao, S., Zhang, T., Lin, Y., et al. (2023).
+\textit{Active Prompting with Chain-of-Thought for Large Language Models}.
+arXiv preprint arXiv:2302.12246.
+(Available at: \url{https://arxiv.org/pdf/2302.12246.pdf})
+
+\bibitem{wang2022self}
+Wang, X., Wei, J., Schuurmans, D., et al. (2022).
+\textit{Self-Consistency Improves Chain of Thought Reasoning in Language Models}.
+arXiv preprint arXiv:2203.11171.
+(Available at: \url{https://arxiv.org/pdf/2203.11171.pdf})
+
+\bibitem{liu2022makes}
+Liu, J., Shen, D., Zhang, Y., et al. (2022).
+\textit{What Makes Good In-Context Examples for GPT-3?}
+arXiv preprint arXiv:2101.06804.
+(Available at: \url{https://arxiv.org/pdf/2101.06804.pdf})
+
+\bibitem{rubin2021learning}
+Rubin, O., Herzig, J., & Berant, J. (2021).
+\textit{Learning To Retrieve Prompts for In-Context Learning}.
+arXiv preprint arXiv:2112.08633.
+(Available at: \url{https://arxiv.org/pdf/2112.08633.pdf})
+
+\bibitem{reimers2019sentence}
+Reimers, N., \& Gurevych, I. (2019).
+\textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}.
+arXiv preprint arXiv:1908.10084.
+(Available at: \url{https://arxiv.org/pdf/1908.10084.pdf})
+
+\end{thebibliography}
+
+\end{document}
