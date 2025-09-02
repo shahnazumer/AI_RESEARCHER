@@ -48,9 +48,9 @@ uv add requirements.txt
 
 ### 4. Install Tectonic (LaTeX → PDF)
 
- -Download from Tectonic Releases
-.-Ensure tectonic is available in your system PATH.
- -Or update TECTONIC_PATH in write_pdf.py.
+ - Download from Tectonic Releases
+ - Ensure tectonic is available in your system PATH.
+ - Or update TECTONIC_PATH in write_pdf.py.
 
 ### 5. Set Up Environment Variables
 ```bash
@@ -68,7 +68,7 @@ This will launch a chat-based interface to interact with the research AI.
 
 ⚡ Quickstart Example
 
-Try with a sample topic:
+Try with a sample topic as an example:
 ```bash
 Write me research paper on quantum computing
 ```
