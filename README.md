@@ -48,12 +48,9 @@ uv add requirements.txt
 
 ### 4. Install Tectonic (LaTeX → PDF)
 
-Download from Tectonic Releases
-.
-
-Ensure tectonic is available in your system PATH.
-
-Or update TECTONIC_PATH in write_pdf.py.
+ -Download from Tectonic Releases
+.-Ensure tectonic is available in your system PATH.
+ -Or update TECTONIC_PATH in write_pdf.py.
 
 ### 5. Set Up Environment Variables
 ```bash
@@ -72,13 +69,15 @@ This will launch a chat-based interface to interact with the research AI.
 ⚡ Quickstart Example
 
 Try with a sample topic:
+```bash
 Write me research paper on quantum computing
+```
 The agent will:
-Fetch recent arXiv papers
-Summarize key findings
-Suggest future research directions
-Write a LaTeX research paper
-Render it as a PDF in the output/ directory
+ - Fetch recent arXiv papers
+ - Summarize key findings
+ - Suggest future research directions
+ - Write a LaTeX research paper
+ - Render it as a PDF in the output/ directory
 
 📂 Project Structure
 ```bash
@@ -94,9 +93,9 @@ Render it as a PDF in the output/ directory
 
 ⚠️ Notes
 
-Requires a valid Google Generative AI API Key.
-Tectonic must be installed for LaTeX → PDF rendering.
-Intended for research and educational purposes only.
+ - Requires a valid Google Generative AI API Key.
+ - Tectonic must be installed for LaTeX → PDF rendering.
+ - Intended for research and educational purposes only.
 
 📜 License
 
