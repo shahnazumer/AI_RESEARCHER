@@ -24,43 +24,64 @@ Built with **LangChain, LangGraph, and Google Generative AI (Gemini)**, this age
 
 This project uses **[uv](https://github.com/astral-sh/uv)** for dependency management.
 
-### 1. Clone the repository
+### Clone the repository
 ```bash
 git clone https://github.com/shahnazumer/AI_RESEARCHER.git
 cd AI_RESEARCHER
 
-### 2. Create & activate environment
+1. Create & Activate Environment
+# Create virtual environment
 uv venv
-# Linux/Mac
+
+# Activate (Linux/Mac)
 source .venv/bin/activate
-# Windows
+
+# Activate (Windows)
 .venv\Scripts\activate
 
-### 3. Install dependencies
+2. Install Dependencies
 uv add requirements.txt
 
-### 4. Install Tectonic (LaTeX → PDF)
+3. Install Tectonic (LaTeX → PDF)
+
 Download from Tectonic Releases
+
 Ensure tectonic is available in your system PATH
+
 Or update TECTONIC_PATH in write_pdf.py
 
-### 5. Set up environment variables
-Create a .env file with your API key:
+4. Set Up Environment Variables
+
+Create a .env file and add your API key:
+
 GOOGLE_API_KEY=your_google_api_key_here
 
 ▶️ Usage
+
 Run the Streamlit frontend:
+
 uv run streamlit run frontend.py
+
+
 This will launch a chat-based interface to interact with the research AI.
 
 ⚡ Quickstart Example
+
 Try with a sample topic:
+
 Write me research paper on quantum computing
+
+
 The agent will:
+
 Fetch recent arXiv papers
+
 Summarize key findings
+
 Suggest future research directions
+
 Write a LaTeX research paper
+
 Render it as a PDF in the output/ directory
 
 📂 Project Structure
@@ -74,12 +95,15 @@ Render it as a PDF in the output/ directory
 └── .env                 # API keys (ignored by git)
 
 ⚠️ Notes
+
 Requires a valid Google Generative AI API Key
+
 Tectonic must be installed for LaTeX → PDF rendering
+
 Intended for research and educational purposes only
 
 📜 License
+
 MIT License – free to use and modify.
 
-✨ With this assistant, you can go from idea → literature review → paper → PDF in a single workflow.
-
+✨ With this assistant, you can go from idea → literature review → paper → PDF in one seamless workflow.
