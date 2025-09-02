@@ -24,33 +24,34 @@ Built with **LangChain, LangGraph, and Google Generative AI (Gemini)**, this age
 
 This project uses **[uv](https://github.com/astral-sh/uv)** for dependency management.
 
-### Clone the repository
+### 1. Clone the repository
 ```bash
 git clone https://github.com/shahnazumer/AI_RESEARCHER.git
 cd AI_RESEARCHER
 
-1. Create & Activate Environment
+### 2. Create & Activate Environment
 # Create virtual environment
-uv venv
+uv venv  
 
 # Activate (Linux/Mac)
-source .venv/bin/activate
+source .venv/bin/activate  
 
 # Activate (Windows)
-.venv\Scripts\activate
+.venv\Scripts\activate  
 
-2. Install Dependencies
+### 3. Install Dependencies
 uv add requirements.txt
 
-3. Install Tectonic (LaTeX → PDF)
+### 4. Install Tectonic (LaTeX → PDF)
 
 Download from Tectonic Releases
+.
 
-Ensure tectonic is available in your system PATH
+Ensure tectonic is available in your system PATH.
 
-Or update TECTONIC_PATH in write_pdf.py
+Or update TECTONIC_PATH in write_pdf.py.
 
-4. Set Up Environment Variables
+### 5. Set Up Environment Variables
 
 Create a .env file and add your API key:
 
@@ -96,14 +97,14 @@ Render it as a PDF in the output/ directory
 
 ⚠️ Notes
 
-Requires a valid Google Generative AI API Key
+Requires a valid Google Generative AI API Key.
 
-Tectonic must be installed for LaTeX → PDF rendering
+Tectonic must be installed for LaTeX → PDF rendering.
 
-Intended for research and educational purposes only
+Intended for research and educational purposes only.
 
 📜 License
 
 MIT License – free to use and modify.
 
-✨ With this assistant, you can go from idea → literature review → paper → PDF in one seamless workflow.
+✨ With this assistant, you can go from idea → literature review → paper draft → polished PDF.
