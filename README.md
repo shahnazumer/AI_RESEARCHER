@@ -30,17 +30,21 @@ git clone https://github.com/shahnazumer/AI_RESEARCHER.git
 cd AI_RESEARCHER
 
 ### 2. Create & Activate Environment
+```bash
 # Create virtual environment
-uv venv  
+uv venv
 
 # Activate (Linux/Mac)
 source .venv/bin/activate  
 
 # Activate (Windows)
-.venv\Scripts\activate  
+.venv\Scripts\activate
+```
 
 ### 3. Install Dependencies
+```bash
 uv add requirements.txt
+```
 
 ### 4. Install Tectonic (LaTeX → PDF)
 
@@ -52,37 +56,28 @@ Ensure tectonic is available in your system PATH.
 Or update TECTONIC_PATH in write_pdf.py.
 
 ### 5. Set Up Environment Variables
-
+```bash
 Create a .env file and add your API key:
-
 GOOGLE_API_KEY=your_google_api_key_here
+```
 
 ▶️ Usage
-
+```bash
 Run the Streamlit frontend:
-
 uv run streamlit run frontend.py
-
+```
 
 This will launch a chat-based interface to interact with the research AI.
 
 ⚡ Quickstart Example
 
 Try with a sample topic:
-
 Write me research paper on quantum computing
-
-
 The agent will:
-
 Fetch recent arXiv papers
-
 Summarize key findings
-
 Suggest future research directions
-
 Write a LaTeX research paper
-
 Render it as a PDF in the output/ directory
 
 📂 Project Structure
